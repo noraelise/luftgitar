@@ -1,0 +1,1 @@
+print("Kjør på nå, stjerna")
