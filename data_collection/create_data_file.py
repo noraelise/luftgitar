@@ -19,10 +19,11 @@ def create_csv(output_file: str):
 
     print("CSV file with header created successfully!")
 
+
 # ======================================================================================
 
 # First: Sample images from the videos in the guitar_videos folder and add output images to guitar_images
-#sample_images_from_videos_in_folder('guitar_videos', 'guitar_images')
+sample_images_from_videos_in_folder('guitar_videos', 'guitar_images')
 
 # Second: Create the csv-file
 create_csv('data/air_guitar.csv')
