@@ -168,3 +168,4 @@ models/
 test_videos/
 
 *.mp4
+*.DS_store
