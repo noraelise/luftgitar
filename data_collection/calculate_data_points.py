@@ -46,7 +46,7 @@ def collect_landmarks(filename):
         pose_landmarks_list = detection_result.pose_landmarks[0] # Index zero as we are only detecting one pose
         # in each image (for now). Should be general.
         for landmark in pose_landmarks_list[11:25]: # Trying first to only focus on the upper body with hands, hence [11:25].
-            landmarks.append(landmark_pb2.Landmark(x=landmark.x, y=landmark.y)) #Normalized
+            landmarks.append(landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y)) #Normalized
 
         print("Successfully collected landmarks from", filename)
 
@@ -64,7 +64,6 @@ def calculate_data_points(filename):
     right_elbow_angle = cu.angle(landmarks[joints["right wrist"]],
                                  landmarks[joints["right elbow"]],
                                  landmarks[joints["right shoulder"]])
-    print(right_elbow_angle)
 
     left_elbow_angle = cu.angle(landmarks[joints["left wrist"]],
                                 landmarks[joints["left elbow"]],
