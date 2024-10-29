@@ -2,7 +2,7 @@ import csv
 import os
 
 from sample_images import sample_images_from_videos_in_folder
-from calculate_data_points import calculate_data_points
+from calculate_data_points import calculate_data_in_image
 
 def add_to_csv(output_file: str, data_points: list):
     with open(output_file, 'a', newline='') as file:
@@ -14,7 +14,9 @@ def add_to_csv(output_file: str, data_points: list):
 def create_csv(output_file: str):
     with open(output_file, 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['right_elbow_angle', 'left_elbow_angle', 'dist_rhand_waist', 'dist_lhand_waist'])
+        writer.writerow(['right_elbow_angle', 'left_elbow_angle',
+                         'dist_rhand_waist', 'dist_lhand_waist',
+                         'height_right_wrist', 'height_left_wrist'])
         file.close()
 
     print("CSV file with header created successfully!")
@@ -31,5 +33,5 @@ create_csv('data/air_guitar.csv')
 # Third: Iterate through the images in the guitar_images folder, calculate and add the data to the csv-file
 for filename in os.listdir('guitar_images'):
     image_path = os.path.join('guitar_images', filename)
-    data_points = calculate_data_points(image_path)
+    data_points = calculate_data_in_image(image_path)
     add_to_csv('data/air_guitar.csv', data_points)

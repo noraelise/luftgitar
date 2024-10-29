@@ -1,6 +1,6 @@
 import cv2
 import mediapipe as mp
-import calculation_utilities as cu
+import data_collection.calculation_utilities as cu
 
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
@@ -56,9 +56,7 @@ def collect_landmarks(filename):
     return landmarks
 
 
-def calculate_data_points(filename):
-    landmarks = collect_landmarks(filename)
-
+def calculate_data_points(landmarks):
     data_points = []
 
     right_elbow_angle = cu.angle(landmarks[joints["right wrist"]],
@@ -77,9 +75,20 @@ def calculate_data_points(filename):
                                                       landmarks[joints["left shoulder"]],
                                                       landmarks[joints["left hip"]])
 
+    height_right_wrist = landmarks[joints["right wrist"]].y
+    height_left_wrist = landmarks[joints["left wrist"]].y
+
     data_points.append(right_elbow_angle)
     data_points.append(left_elbow_angle)
     data_points.append(dist_rhand_waist)
     data_points.append(dist_lhand_waist)
+    data_points.append(height_right_wrist)
+    data_points.append(height_left_wrist)
+
+    return data_points
+
+def calculate_data_in_image(filename):
+    landmarks = collect_landmarks(filename)
+    data_points = calculate_data_points(landmarks)
 
     return data_points
