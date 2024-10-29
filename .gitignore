@@ -165,3 +165,6 @@ data_collection/data/
 data_collection/guitar_images/
 data_collection/guitar_videos/
 models/
+test_videos/
+
+*.mp4

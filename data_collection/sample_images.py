@@ -22,7 +22,7 @@ def sample_images_from_video(filename: str, output_folder: str):
 
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    sample_percentage = 0.1
+    sample_percentage = 0.2
     step = int(1/sample_percentage)
 
     for i in range(0, total_frames, step):
