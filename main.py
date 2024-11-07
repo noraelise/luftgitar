@@ -9,6 +9,7 @@ from data_collection.calculate_data_points import calculate_data_points
 from logic import playing_air_guitar
 
 previous_cb_time = None # for cb_timing
+guitar_detected = False
 
 def cb_timing(result: mp.tasks.vision.PoseLandmarkerResult, output_image: mp.Image, timestamp_ms ):
     global previous_cb_time
@@ -36,10 +37,9 @@ def cb_detect_air_guitar(result: mp.tasks.vision.PoseLandmarkerResult, output_im
 
     data_points = calculate_data_points(landmarks)
 
-    if playing_air_guitar(data_points):
-        print("guitar detected")
-    else:
-        print("guitar not detected")
+    global guitar_detected
+    guitar_detected = playing_air_guitar(data_points)
+
 
 # =======================================================================================================
 
@@ -69,6 +69,10 @@ while (cap.isOpened()):
     # Detect pose
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
     detector.detect_async(mp_image, int(cap.get(cv2.CAP_PROP_POS_MSEC)))
+
+    # Signal detected guitar
+    if guitar_detected:
+        print("Guitar detected")
 
     cv2.imshow("Video", frame)
 
