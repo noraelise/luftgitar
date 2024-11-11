@@ -3,13 +3,13 @@ import os
 import random
 
 
-def sample_images_from_videos_in_folder(input_folder: str, output_folder: str):
+def sample_images_from_videos_in_folder(input_folder: str, output_folder: str, sample_percentage: float):
     for filename in os.listdir(input_folder):
-        sample_images_from_video(os.path.join(input_folder, filename), output_folder)
+        sample_images_from_video(os.path.join(input_folder, filename), output_folder, sample_percentage)
         print("Successfully extracted images from", filename)
 
 
-def sample_images_from_video(filename: str, output_folder: str):
+def sample_images_from_video(filename: str, output_folder: str, sample_percentage):
     cap = cv2.VideoCapture(filename)
 
     if not cap.isOpened():
@@ -22,7 +22,7 @@ def sample_images_from_video(filename: str, output_folder: str):
 
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    sample_percentage = 0.2
+    sample_percentage *= 0.01
     step = int(1/sample_percentage)
 
     for i in range(0, total_frames, step):

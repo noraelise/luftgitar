@@ -16,7 +16,8 @@ def create_csv(output_file: str):
         writer = csv.writer(file)
         writer.writerow(['right_elbow_angle', 'left_elbow_angle',
                          'dist_rhand_waist', 'dist_lhand_waist',
-                         'height_right_wrist', 'height_left_wrist'])
+                         'height_right_wrist', 'height_left_wrist',
+                         'distance_between_wrists', 'angle_left_underarm'])
         file.close()
 
     print("CSV file with header created successfully!")
@@ -25,7 +26,7 @@ def create_csv(output_file: str):
 # ======================================================================================
 
 # First: Sample images from the videos in the guitar_videos folder and add output images to guitar_images
-sample_images_from_videos_in_folder('guitar_videos', 'guitar_images')
+sample_images_from_videos_in_folder('guitar_videos', 'guitar_images', 20)
 
 # Second: Create the csv-file
 create_csv('data/air_guitar.csv')
