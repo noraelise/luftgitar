@@ -55,7 +55,7 @@ options = vision.PoseLandmarkerOptions(base_options=base_options,
 detector = PoseLandmarker.create_from_options(options)
 
 #cap = cv2.VideoCapture('data_collection/guitar_videos/IMG_0362.mp4')
-cap = cv2.VideoCapture('test_videos/august.mp4')
+cap = cv2.VideoCapture('test_videos/IMG_0257.mp4')
 
 if not cap.isOpened():
     print("Error in opening video file.")
@@ -68,11 +68,18 @@ while (cap.isOpened()):
 
     # Detect pose
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
-    detector.detect_async(mp_image, int(cap.get(cv2.CAP_PROP_POS_MSEC)))
+    timestamp = int(cap.get(cv2.CAP_PROP_POS_MSEC))
+    if timestamp < 0:
+        timestamp = 0
+    detector.detect_async(mp_image, timestamp)
 
     # Signal detected guitar
     if guitar_detected:
+        name = 'test_videos/wrongly_classified/IMG_0257'+str(timestamp)+'.jpg'
+        cv2.imwrite(name, frame)
         print("Guitar detected")
+    else:
+        print("No guitar")
 
     cv2.imshow("Video", frame)
 

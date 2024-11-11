@@ -27,11 +27,19 @@ def distance_from_point_to_line(pt0, pt1, pt2):
 
 # Calculates angle of a single line in reference to a horizontal line
 def angle_of_line(line_pt1, line_pt2):
-    pass
+    dx = line_pt2.x-line_pt1.x
+    dy = line_pt2.y-line_pt1.y
+    theta = (np.degrees(np.arctan2(dy, dx)))
+    return theta
 
 # Calculates the Euclidian distance between two points
 def distance_between_two_points(pt1, pt2):
-    pass
+
+    x_dist = pt2.x-pt1.x
+    y_dist = pt2.y-pt1.y
+    dist = np.sqrt(x_dist**2+y_dist**2)
+
+    return dist
 
 
 

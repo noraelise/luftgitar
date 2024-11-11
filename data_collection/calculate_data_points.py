@@ -78,12 +78,19 @@ def calculate_data_points(landmarks):
     height_right_wrist = landmarks[joints["right wrist"]].y
     height_left_wrist = landmarks[joints["left wrist"]].y
 
+    distance_between_wrists = cu.distance_between_two_points(landmarks[joints["right wrist"]],
+                                                             landmarks[joints["left wrist"]])
+
+    angle_left_underarm = cu.angle_of_line(landmarks[joints["left wrist"]], landmarks[joints["left elbow"]])
+
     data_points.append(right_elbow_angle)
     data_points.append(left_elbow_angle)
     data_points.append(dist_rhand_waist)
     data_points.append(dist_lhand_waist)
     data_points.append(height_right_wrist)
     data_points.append(height_left_wrist)
+    data_points.append(distance_between_wrists)
+    data_points.append(abs(angle_left_underarm))
 
     return data_points
 
