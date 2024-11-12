@@ -59,38 +59,41 @@ def collect_landmarks(filename):
 def calculate_data_points(landmarks):
     data_points = []
 
-    right_elbow_angle = cu.angle(landmarks[joints["right wrist"]],
-                                 landmarks[joints["right elbow"]],
-                                 landmarks[joints["right shoulder"]])
+    try:
+        right_elbow_angle = cu.angle(landmarks[joints["right wrist"]],
+                                     landmarks[joints["right elbow"]],
+                                     landmarks[joints["right shoulder"]])
 
-    left_elbow_angle = cu.angle(landmarks[joints["left wrist"]],
-                                landmarks[joints["left elbow"]],
-                                landmarks[joints["left shoulder"]])
+        left_elbow_angle = cu.angle(landmarks[joints["left wrist"]],
+                                    landmarks[joints["left elbow"]],
+                                    landmarks[joints["left shoulder"]])
 
-    dist_rhand_waist = cu.distance_from_point_to_line(landmarks[joints["right wrist"]],
-                                                      landmarks[joints["right shoulder"]],
-                                                      landmarks[joints["right hip"]])
+        dist_rhand_waist = cu.distance_from_point_to_line(landmarks[joints["right wrist"]],
+                                                          landmarks[joints["right shoulder"]],
+                                                          landmarks[joints["right hip"]])
 
-    dist_lhand_waist = cu.distance_from_point_to_line(landmarks[joints["left wrist"]],
-                                                      landmarks[joints["left shoulder"]],
-                                                      landmarks[joints["left hip"]])
+        dist_lhand_waist = cu.distance_from_point_to_line(landmarks[joints["left wrist"]],
+                                                          landmarks[joints["left shoulder"]],
+                                                          landmarks[joints["left hip"]])
 
-    height_right_wrist = landmarks[joints["right wrist"]].y
-    height_left_wrist = landmarks[joints["left wrist"]].y
+        height_right_wrist = landmarks[joints["right wrist"]].y
+        height_left_wrist = landmarks[joints["left wrist"]].y
 
-    distance_between_wrists = cu.distance_between_two_points(landmarks[joints["right wrist"]],
-                                                             landmarks[joints["left wrist"]])
+        distance_between_wrists = cu.distance_between_two_points(landmarks[joints["right wrist"]],
+                                                                 landmarks[joints["left wrist"]])
 
-    angle_left_underarm = cu.angle_of_line(landmarks[joints["left wrist"]], landmarks[joints["left elbow"]])
+        angle_left_underarm = cu.angle_of_line(landmarks[joints["left wrist"]], landmarks[joints["left elbow"]])
 
-    data_points.append(right_elbow_angle)
-    data_points.append(left_elbow_angle)
-    data_points.append(dist_rhand_waist)
-    data_points.append(dist_lhand_waist)
-    data_points.append(height_right_wrist)
-    data_points.append(height_left_wrist)
-    data_points.append(distance_between_wrists)
-    data_points.append(abs(angle_left_underarm))
+        data_points.append(right_elbow_angle)
+        data_points.append(left_elbow_angle)
+        data_points.append(dist_rhand_waist)
+        data_points.append(dist_lhand_waist)
+        data_points.append(height_right_wrist)
+        data_points.append(height_left_wrist)
+        data_points.append(distance_between_wrists)
+        data_points.append(abs(angle_left_underarm))
+    except IndexError:
+        data_points.append('IndexError')
 
     return data_points
 

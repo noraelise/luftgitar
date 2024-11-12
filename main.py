@@ -32,13 +32,13 @@ def cb_detect_air_guitar(result: mp.tasks.vision.PoseLandmarkerResult, output_im
         for landmark in pose_landmarks_list[11:25]:  # Trying first to only focus on the upper body with hands, hence [11:25].
             landmarks.append(landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y))  # Normalized
 
+        data_points = calculate_data_points(landmarks)
+
+        global guitar_detected
+        guitar_detected = playing_air_guitar(data_points)
+
     except IndexError:
         print("Unable to detect pose at", timestamp_ms)
-
-    data_points = calculate_data_points(landmarks)
-
-    global guitar_detected
-    guitar_detected = playing_air_guitar(data_points)
 
 
 # =======================================================================================================
@@ -54,7 +54,7 @@ options = vision.PoseLandmarkerOptions(base_options=base_options,
 
 detector = PoseLandmarker.create_from_options(options)
 
-#cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture(1) # 1=webcam, 0=phone
 cap = cv2.VideoCapture('test_videos/august.mp4')
 
 if not cap.isOpened():
@@ -64,22 +64,22 @@ if not cap.isOpened():
 while (cap.isOpened()):
     ret, frame = cap.read()
     if not ret:
+        print("Not able to capture frame.")
         break
 
     # Detect pose
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
     timestamp = int(cap.get(cv2.CAP_PROP_POS_MSEC))
-    if timestamp < 0:
-        timestamp = 0
-    detector.detect_async(mp_image, timestamp)
+    if timestamp > 0:
+        detector.detect_async(mp_image, timestamp)
 
     # Signal detected guitar
     if guitar_detected:
         #name = 'test_videos/wrongly_classified/IMG_0257'+str(timestamp)+'.jpg'
         #cv2.imwrite(name, frame)
-        print("Guitar detected")
+        print("Guitar detected at", timestamp)
     else:
-        print("No guitar")
+        print("No guitar at", timestamp )
 
     cv2.imshow("Video", frame)
 
