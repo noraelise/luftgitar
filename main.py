@@ -54,8 +54,8 @@ options = vision.PoseLandmarkerOptions(base_options=base_options,
 
 detector = PoseLandmarker.create_from_options(options)
 
-cap = cv2.VideoCapture(1) # 1=webcam, 0=phone
-#cap = cv2.VideoCapture('test_videos/august.mp4')
+#cap = cv2.VideoCapture(1) # 1=webcam, 0=phone
+cap = cv2.VideoCapture('test_videos/august.mp4')
 
 if not cap.isOpened():
     print("Error in opening video file.")
@@ -64,6 +64,7 @@ if not cap.isOpened():
 while (cap.isOpened()):
     ret, frame = cap.read()
     if not ret:
+        print("Not able to capture frame.")
         break
 
     # Detect pose
@@ -76,9 +77,9 @@ while (cap.isOpened()):
     if guitar_detected:
         #name = 'test_videos/wrongly_classified/IMG_0257'+str(timestamp)+'.jpg'
         #cv2.imwrite(name, frame)
-        print("Guitar detected")
+        print("Guitar detected at", timestamp)
     else:
-        print("No guitar")
+        print("No guitar at", timestamp )
 
     cv2.imshow("Video", frame)
 
