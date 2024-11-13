@@ -11,21 +11,18 @@ class MusicPlayer:
         self.thread = None
 
     def play_music(self):
-        """Function to start playing music."""
         if not self.is_playing:
             pygame.mixer.music.load(self.music_file)
             pygame.mixer.music.play(-1)  # -1 makes it loop
             self.is_playing = True
 
-    def start(self):
-        """Start playing music in a new thread if it's not already playing."""
+    def start_thread(self):
         if not self.is_playing:
             # Create a new thread each time start is called
             self.thread = threading.Thread(target=self.play_music)
             self.thread.start()
 
-    def stop(self):
-        """Stop the music and join the thread."""
+    def stop_thread(self):
         if self.is_playing:
             pygame.mixer.music.stop()
             self.is_playing = False
