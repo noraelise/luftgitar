@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-data = pd.read_csv('../data_collection/data/air_guitar.csv')
+data = pd.read_csv('../data_collection/data/webcam.csv')
 
 # Print min and max for each feature
 for column in data.columns:

@@ -4,25 +4,23 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 import cv2
 import time
+from music import MusicPlayer
 
 from data_collection.calculate_data_points import calculate_data_points
 from logic import playing_air_guitar
 
-previous_cb_time = None # for cb_timing
+# =======================================================================================================
+
 guitar_detected = False
+last_guitar_detected = False
+music_playing = False
 
-def cb_timing(result: mp.tasks.vision.PoseLandmarkerResult, output_image: mp.Image, timestamp_ms ):
-    global previous_cb_time
+# Read until video is completed
+num_frames = 0
+stable_guitar_pose = 0
+stable_no_guitar = 0
 
-    curr_time = time.time()
-
-    # Calculate the time interval if there was a previous call
-    if previous_cb_time is not None:
-        interval = curr_time - previous_cb_time
-        print(f"Time since last call: {interval:.4f} seconds")
-
-    # Update the previous call time to the current time
-    previous_cb_time = curr_time
+# =======================================================================================================
 
 def cb_detect_air_guitar(result: mp.tasks.vision.PoseLandmarkerResult, output_image: mp.Image, timestamp_ms ):
     landmarks = []
@@ -35,13 +33,22 @@ def cb_detect_air_guitar(result: mp.tasks.vision.PoseLandmarkerResult, output_im
         data_points = calculate_data_points(landmarks)
 
         global guitar_detected
+        global last_guitar_detected
+
+        last_guitar_detected = guitar_detected
         guitar_detected = playing_air_guitar(data_points)
 
     except IndexError:
         print("Unable to detect pose at", timestamp_ms)
 
+def reset_pose_counters():
+    global stable_guitar_pose
+    global stable_no_guitar
+    stable_guitar_pose = 0
+    stable_no_guitar = 0
 
 # =======================================================================================================
+
 
 #BaseOptions = mp.tasks.BaseOptions
 PoseLandmarker = mp.tasks.vision.PoseLandmarker
@@ -54,32 +61,53 @@ options = vision.PoseLandmarkerOptions(base_options=base_options,
 
 detector = PoseLandmarker.create_from_options(options)
 
-#cap = cv2.VideoCapture(1) # 1=webcam, 0=phone
-cap = cv2.VideoCapture('test_videos/august.mp4')
+# Example usage:
+music_file = "music_tracks/smulik.mp3"  # Replace with your file path
+player = MusicPlayer(music_file)
 
+#cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('test_videos/IMG_0664.MOV')
 if not cap.isOpened():
     print("Error in opening video file.")
 
-# Read until video is completed
 while (cap.isOpened()):
     ret, frame = cap.read()
     if not ret:
         print("Not able to capture frame.")
+        cap.release()
+        cv2.destroyAllWindows()
         break
+    num_frames += 1
 
     # Detect pose
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
-    timestamp = int(cap.get(cv2.CAP_PROP_POS_MSEC))
-    if timestamp > 0:
-        detector.detect_async(mp_image, timestamp)
+    #timestamp = int(cap.get(cv2.CAP_PROP_POS_MSEC))
+    detector.detect_async(mp_image, num_frames)
 
     # Signal detected guitar
     if guitar_detected:
-        #name = 'test_videos/wrongly_classified/IMG_0257'+str(timestamp)+'.jpg'
-        #cv2.imwrite(name, frame)
-        print("Guitar detected at", timestamp)
+        if last_guitar_detected != guitar_detected:
+            reset_pose_counters()
+        stable_guitar_pose += 1
+        print("Guitar detected at", num_frames)
     else:
-        print("No guitar at", timestamp )
+        if last_guitar_detected != guitar_detected:
+            reset_pose_counters()
+        stable_no_guitar += 1
+        print("No guitar at", num_frames)
+
+    if music_playing and stable_no_guitar >= 8:
+        # Stop the music
+        player.stop_thread()
+        print("Stopping music playback.")
+        music_playing = False
+        reset_pose_counters()
+    elif not music_playing and stable_guitar_pose >= 4:
+        # Start the music
+        player.start_thread()
+        print("Starting music playback.")
+        music_playing = True
+        reset_pose_counters()
 
     cv2.imshow("Video", frame)
 
