@@ -166,6 +166,9 @@ data_collection/guitar_images/
 data_collection/guitar_videos/
 models/
 test_videos/
+guitar_stats/
+music_tracks/
 
+*.mp3
 *.mp4
 *.DS_store
