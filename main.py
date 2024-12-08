@@ -3,9 +3,9 @@ import cv2
 from music import MusicPlayer
 from pose_detector import AirGuitarPoseDetector
 
-# Music player initialization
+# The music_player initialization
 music_file = "music_tracks/smulik.mp3"
-player = MusicPlayer(music_file)
+music_player = MusicPlayer(music_file)
 
 # Callback function for air guitar detection
 def cb_detect_air_guitar(result, output_image, timestamp_ms):
@@ -39,14 +39,14 @@ while cap.isOpened():
     detector.update_stability()
 
     # Handle music playback based on detection
-    if player.is_playing and detector.stable_no_guitar >= 8:
+    if music_player.is_playing and detector.stable_no_guitar >= 8:
         # Stop the music
-        player.stop_thread()
+        music_player.stop_thread()
         print("Stopping music playback.")
         detector.reset_counters()
-    elif not player.is_playing and detector.stable_guitar_pose >= 4:  # Higher sensitivity for guitar pose
+    elif not music_player.is_playing and detector.stable_guitar_pose >= 4:  # Higher sensitivity for guitar pose
         # Start the music
-        player.start_thread()
+        music_player.start_thread()
         print("Starting music playback.")
         detector.reset_counters()
 
