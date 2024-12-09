@@ -7,9 +7,9 @@ from logic import playing_air_guitar
 class AirGuitarPoseDetector:
     def __init__(self, model_path, result_callback):
         self.guitar_detected = False
-        self.last_guitar_detected = False
-        self.stable_guitar_pose = 0
-        self.stable_no_guitar = 0
+        self.last_pose_detected = False
+        self.guitar_pose = 0
+        self.no_guitar_pose = 0
 
         base_options = python.BaseOptions(model_asset_path=model_path)
         options = vision.PoseLandmarkerOptions(base_options=base_options,
@@ -29,24 +29,32 @@ class AirGuitarPoseDetector:
 
             data_points = calculate_data_points(landmarks)
 
-            self.last_guitar_detected = self.guitar_detected
+            self.last_pose_detected = self.guitar_detected
             self.guitar_detected = playing_air_guitar(data_points)
 
         except IndexError:
             print("Unable to detect pose at", timestamp_ms)
 
     def reset_counters(self):
-        self.stable_guitar_pose = 0
-        self.stable_no_guitar = 0
+        self.guitar_pose = 0
+        self.no_guitar_pose = 0
 
     def update_stability(self):
+        if self.last_pose_detected != self.guitar_detected:
+            # A new guitar pose has been detected
+            self.reset_counters()
+
         if self.guitar_detected:
-            if self.last_guitar_detected != self.guitar_detected:
-                # A new guitar pose has been detected
-                self.reset_counters()
-            self.stable_guitar_pose += 1
+            self.guitar_pose += 1
         else:
-            if self.last_guitar_detected != self.guitar_detected:
-                # A new no guitar pose has been detected
-                self.reset_counters()
-            self.stable_no_guitar += 1
+            self.no_guitar_pose += 1
+
+    def stable_guitar_pose(self):
+        if self.guitar_pose >= 4:
+            return True
+        return False
+
+    def stable_no_guitar_pose(self):
+        if self.no_guitar_pose >= 8:
+            return True
+        return False

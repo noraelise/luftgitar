@@ -29,15 +29,3 @@ class MusicPlayer:
             if self.thread is not None:
                 self.thread.join()  # Ensure the thread is cleaned up
                 self.thread = None  # Reset the thread so it can be recreated
-
-
-'''
-import librosa
-from pydub import AudioSegment
-from pydub.playback import play
-import time
-
-def play_music():
-    start_time = time.time()
-    play(AudioSegment.from_mp3("music_tracks/smulik.mp3"))
-    print("Latency of playback:", time.time() - start_time - 19.7) '''

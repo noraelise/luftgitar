@@ -26,8 +26,6 @@ while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
         print("Not able to capture frame.")
-        cap.release()
-        cv2.destroyAllWindows()
         break
     num_frames += 1
 
@@ -39,12 +37,12 @@ while cap.isOpened():
     detector.update_stability()
 
     # Handle music playback based on detection
-    if music_player.is_playing and detector.stable_no_guitar >= 8:
+    if music_player.is_playing and detector.stable_no_guitar_pose():
         # Stop the music
         music_player.stop_thread()
         print("Stopping music playback.")
         detector.reset_counters()
-    elif not music_player.is_playing and detector.stable_guitar_pose >= 4:  # Higher sensitivity for guitar pose
+    elif not music_player.is_playing and detector.stable_guitar_pose():  # Higher sensitivity for guitar pose
         # Start the music
         music_player.start_thread()
         print("Starting music playback.")
