@@ -1,19 +1,27 @@
 import threading
-import time
 import pygame
+
+import numpy as np
+
+from time import time as now
 
 class MusicPlayer:
     def __init__(self, music_file):
         # Initialize pygame mixer
-        pygame.mixer.init()
+        pygame.mixer.init(size=32)
         self.music_file = music_file
+        self.buffer = np.sin(2 * np.pi * np.arange(44100) * 440 / 44100).astype(np.float32)
+        self.sound = pygame.mixer.Sound(self.buffer)
         self.is_playing = False
         self.thread = None
+        self.music_started = 0
 
     def play_music(self):
         if not self.is_playing:
-            pygame.mixer.music.load(self.music_file)
-            pygame.mixer.music.play(-1)  # -1 makes it loop
+            #pygame.mixer.music.load(self.music_file)
+            #pygame.mixer.music.play(-1)  # -1 makes it loop
+            self.sound.play(-1)
+            self.music_started = now()
             self.is_playing = True
 
     def start_thread(self):
@@ -24,7 +32,7 @@ class MusicPlayer:
 
     def stop_thread(self):
         if self.is_playing:
-            pygame.mixer.music.stop()
+            self.sound.stop()
             self.is_playing = False
             if self.thread is not None:
                 self.thread.join()  # Ensure the thread is cleaned up

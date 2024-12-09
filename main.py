@@ -2,21 +2,30 @@ import mediapipe as mp
 import cv2
 from music import MusicPlayer
 from pose_detector import AirGuitarPoseDetector
+from time import time as now
 
 # The music_player initialization
 music_file = "music_tracks/smulik.mp3"
 music_player = MusicPlayer(music_file)
 
+timing_results = []
+timing_check = {}
+
+cb_num = 0
+
 # Callback function for air guitar detection
 def cb_detect_air_guitar(result, output_image, timestamp_ms):
     detector.process_detection_result(result, timestamp_ms)
+    global cb_num
+    cb_num += 1
 
 # Initialize pose detector with model path and callback
 detector = AirGuitarPoseDetector(model_path='models/pose_landmarker_lite.task',
                                  result_callback=cb_detect_air_guitar)
 
 # Video capture initialization
-cap = cv2.VideoCapture('test_videos/IMG_0664.MOV')
+cap = cv2.VideoCapture('test_videos/IMG_0361.mp4')
+#cap = cv2.VideoCapture(1)
 if not cap.isOpened():
     print("Error in opening video file.")
 
@@ -49,8 +58,16 @@ while cap.isOpened():
         music_player.start_thread()
         print("Starting music playback.")
         detector.reset_counters()
+        timestamp = music_player.music_started - detector.new_pose_at
+        timing_results.append(timestamp)
+
+        if not timestamp in timing_check:
+            timing_check[timestamp] = 1
+        else:
+            timing_check[timestamp] += 1
 
     cv2.imshow("Video", frame)
+
 
     # Press Q on keyboard to exit
     if cv2.waitKey(25) & 0xFF == ord('q'):
@@ -58,3 +75,24 @@ while cap.isOpened():
 
 cap.release()
 cv2.destroyAllWindows()
+
+n = len(timing_results)
+print(n)
+total = 0
+for i in range(n):
+    total += timing_results[i]
+
+average = total / n
+print("Average:", average)
+
+sorted_list = timing_results.copy()
+sorted_list.sort()
+
+print("Min:", sorted_list[0])
+print("Max:", sorted_list[-1])
+print("Median:", sorted_list[int(n/2)])
+
+print(timing_check)
+
+print("Num of callbacks:", cb_num)
+print("Num of frames:", num_frames)

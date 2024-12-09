@@ -4,6 +4,8 @@ from mediapipe.tasks.python import vision
 from data_collection.calculate_data_points import calculate_data_points
 from logic import playing_air_guitar
 
+from time import time as now
+
 class AirGuitarPoseDetector:
     def __init__(self, model_path, result_callback):
         self.guitar_detected = False
@@ -16,6 +18,8 @@ class AirGuitarPoseDetector:
                                                running_mode=vision.RunningMode.LIVE_STREAM,
                                                result_callback=result_callback)
         self.detector = vision.PoseLandmarker.create_from_options(options)
+
+        self.new_pose_at = 0
 
     def detect_async(self, image, timestamp):
         self.detector.detect_async(image, timestamp)
@@ -40,13 +44,12 @@ class AirGuitarPoseDetector:
         self.stable_no_guitar = 0
 
     def update_stability(self):
+        if self.last_guitar_detected != self.guitar_detected:
+            self.new_pose_at = now()
+            # A new guitar pose has been detected
+            self.reset_counters()
+
         if self.guitar_detected:
-            if self.last_guitar_detected != self.guitar_detected:
-                # A new guitar pose has been detected
-                self.reset_counters()
             self.stable_guitar_pose += 1
         else:
-            if self.last_guitar_detected != self.guitar_detected:
-                # A new no guitar pose has been detected
-                self.reset_counters()
             self.stable_no_guitar += 1

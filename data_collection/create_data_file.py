@@ -26,11 +26,11 @@ def create_csv(output_file: str):
 # ======================================================================================
 
 # First: Sample images from the videos in the guitar_videos folder and add output images to guitar_images
-#sample_images_from_videos_in_folder('guitar_videos', 'guitar_images', 20)
+sample_images_from_videos_in_folder('guitar_videos', 'guitar_images', 20)
 #sample_images_from_videos_in_folder('../guitar_stats', 'guitar_images', 20)
 
 # Second: Create the csv-file
-output_csv = 'data/webcam.csv'
+output_csv = 'data/air_guitar.csv'
 create_csv(output_csv)
 
 # Third: Iterate through the images in the guitar_images folder, calculate and add the data to the csv-file
