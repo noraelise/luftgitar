@@ -1,8 +1,7 @@
 import csv
 import os
 
-from sample_images import sample_images_from_videos_in_folder
-from calculate_data_points import calculate_data_in_image
+from utilities.calculate_features import calculate_features_in_image
 
 def add_to_csv(output_file: str, data_points: list):
     with open(output_file, 'a', newline='') as file:
@@ -36,5 +35,5 @@ create_csv(output_csv)
 # Third: Iterate through the images in the guitar_images folder, calculate and add the data to the csv-file
 for filename in os.listdir('guitar_images'):
     image_path = os.path.join('guitar_images', filename)
-    data_points = calculate_data_in_image(image_path)
+    data_points = calculate_features_in_image(image_path)
     add_to_csv(output_csv, data_points)

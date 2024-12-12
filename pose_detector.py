@@ -1,8 +1,8 @@
 from mediapipe.framework.formats import landmark_pb2
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
-from data_collection.calculate_data_points import calculate_data_points
-from logic import playing_air_guitar
+from utilities.calculate_features import calculate_features
+from utilities.logic import playing_air_guitar
 
 class AirGuitarPoseDetector:
     def __init__(self, model_path, result_callback):
@@ -27,10 +27,10 @@ class AirGuitarPoseDetector:
             for landmark in pose_landmarks_list[11:25]:  # Focus on upper body landmarks
                 landmarks.append(landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y))
 
-            data_points = calculate_data_points(landmarks)
+            features = calculate_features(landmarks)
 
             self.last_pose_detected = self.guitar_detected
-            self.guitar_detected = playing_air_guitar(data_points)
+            self.guitar_detected = playing_air_guitar(features)
 
         except IndexError:
             print("Unable to detect pose at", timestamp_ms)
@@ -50,11 +50,11 @@ class AirGuitarPoseDetector:
             self.no_guitar_pose += 1
 
     def stable_guitar_pose(self):
-        if self.guitar_pose >= 4:
+        if self.guitar_pose >= 1:
             return True
         return False
 
     def stable_no_guitar_pose(self):
-        if self.no_guitar_pose >= 8:
+        if self.no_guitar_pose >= 3:
             return True
         return False

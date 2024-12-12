@@ -1,9 +1,9 @@
 
-def playing_air_guitar(data_points) -> bool:
+def playing_air_guitar(features) -> bool:
     (right_elbow_angle, left_elbow_angle,
      dist_rhand_waist, dist_lhand_waist,
      height_right_wrist, height_left_wrist,
-     distance_between_wrists, angle_left_underarm) = data_points
+     distance_between_wrists, angle_left_underarm) = features
 
     if ((30 < right_elbow_angle < 150)          and (0 < left_elbow_angle < 170) and
         (0 < dist_rhand_waist < 0.08)           and (0 < dist_lhand_waist < 0.2) and
