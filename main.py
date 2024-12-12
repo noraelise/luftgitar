@@ -16,18 +16,16 @@ detector = AirGuitarPoseDetector(model_path='models/pose_landmarker_lite.task',
                                  result_callback=cb_detect_air_guitar)
 
 # Video capture initialization
-cap = cv2.VideoCapture('test_videos/IMG_0664.MOV')
+#cap = cv2.VideoCapture('test_videos/IMG_0664.MOV')
+cap = cv2.VideoCapture(1)
 if not cap.isOpened():
     print("Error in opening video file.")
 
 num_frames = 0
-# Main loop
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
         print("Not able to capture frame.")
-        cap.release()
-        cv2.destroyAllWindows()
         break
     num_frames += 1
 
@@ -38,19 +36,17 @@ while cap.isOpened():
     # Update pose stability counters
     detector.update_stability()
 
-    # Handle music playback based on detection
-    if music_player.is_playing and detector.stable_no_guitar >= 8:
-        # Stop the music
-        music_player.stop_thread()
-        print("Stopping music playback.")
-        detector.reset_counters()
-    elif not music_player.is_playing and detector.stable_guitar_pose >= 4:  # Higher sensitivity for guitar pose
+    # Check if an air guitar pose has been detected
+    if not music_player.is_playing and detector.stable_guitar_pose():
         # Start the music
-        music_player.start_thread()
-        print("Starting music playback.")
+        music_player.play_music()
+        detector.reset_counters()
+    elif music_player.is_playing and detector.stable_no_guitar_pose():
+        # Stop the music
+        music_player.stop_music()
         detector.reset_counters()
 
-    cv2.imshow("Video", frame)
+    cv2.imshow("LIVE_STREAM", frame)
 
     # Press Q on keyboard to exit
     if cv2.waitKey(25) & 0xFF == ord('q'):

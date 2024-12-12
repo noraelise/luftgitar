@@ -1,6 +1,6 @@
 import cv2
 import mediapipe as mp
-import data_collection.calculation_utilities as cu
+import utilities.calculation_utilities as cu
 
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
@@ -22,7 +22,6 @@ joints = {
     "left hip": 12,
     "right hip": 13
 }
-
 
 def collect_landmarks(filename):
     landmarks = []
@@ -56,8 +55,8 @@ def collect_landmarks(filename):
     return landmarks
 
 
-def calculate_data_points(landmarks):
-    data_points = []
+def calculate_features(landmarks):
+    features = []
 
     try:
         right_elbow_angle = cu.angle(landmarks[joints["right wrist"]],
@@ -84,21 +83,21 @@ def calculate_data_points(landmarks):
 
         angle_left_underarm = cu.angle_of_line(landmarks[joints["left wrist"]], landmarks[joints["left elbow"]])
 
-        data_points.append(right_elbow_angle)
-        data_points.append(left_elbow_angle)
-        data_points.append(dist_rhand_waist)
-        data_points.append(dist_lhand_waist)
-        data_points.append(height_right_wrist)
-        data_points.append(height_left_wrist)
-        data_points.append(distance_between_wrists)
-        data_points.append(abs(angle_left_underarm))
+        features.append(right_elbow_angle)
+        features.append(left_elbow_angle)
+        features.append(dist_rhand_waist)
+        features.append(dist_lhand_waist)
+        features.append(height_right_wrist)
+        features.append(height_left_wrist)
+        features.append(distance_between_wrists)
+        features.append(abs(angle_left_underarm))
     except IndexError:
-        data_points.append('IndexError')
+        features.append('IndexError')
 
-    return data_points
+    return features
 
-def calculate_data_in_image(filename):
+def calculate_features_in_image(filename):
     landmarks = collect_landmarks(filename)
-    data_points = calculate_data_points(landmarks)
+    features = calculate_features(landmarks)
 
-    return data_points
+    return features

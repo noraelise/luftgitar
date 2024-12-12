@@ -172,3 +172,5 @@ music_tracks/
 *.mp3
 *.mp4
 *.DS_store
+
+test.py
