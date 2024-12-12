@@ -51,10 +51,12 @@ class AirGuitarPoseDetector:
 
     def stable_guitar_pose(self):
         if self.guitar_pose >= 1:
+            self.reset_counters()
             return True
         return False
 
     def stable_no_guitar_pose(self):
         if self.no_guitar_pose >= 3:
+            self.reset_counters()
             return True
         return False

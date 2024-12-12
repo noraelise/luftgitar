@@ -40,12 +40,11 @@ while cap.isOpened():
     if not music_player.is_playing and detector.stable_guitar_pose():
         # Start the music
         music_player.play_music()
-        detector.reset_counters()
     elif music_player.is_playing and detector.stable_no_guitar_pose():
         # Stop the music
         music_player.stop_music()
-        detector.reset_counters()
 
+    frame = cv2.flip(frame, 1)
     cv2.imshow("LIVE_STREAM", frame)
 
     # Press Q on keyboard to exit
